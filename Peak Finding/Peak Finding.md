@@ -4,7 +4,7 @@
 
 - **What is a peak ?**
 
-Let's say that we have an array of elements of integers as follow,
+Let's say that we have an array of elements as follow,
 
 ![array of elements](array-of-elements.png)
 
@@ -73,9 +73,9 @@ const findPeak = (arr, lower = 0, upper = arr.length - 1) => {
 };
 ```
 
-Now, let's take an example to illustrate how the cde above works.
+Now, let's take an example to illustrate how the code above works.
 
-We want to find a peak in the array `[1,2,9,5,3,7,8,6]` using the function above. First iteration, we have `lower = 0` and `upper = 7` since the length of the arr is `8` so the last index (postilion) will be `7`. Now, `mid = 3` and with comparing both neighbors of `arr[3]` we get that the first condition is satisfied and we should look at the left side an ignore the right one. Second iteration, we have `lower = 0` and `upper = 2` and so `mid = 1` and this time the second condition is being satisfied and so we look into the right side. Third iteration, `lower = 2` and `upper = 2` and therefore `mid = 2` and neither of the first condition nor the the second one are satisfied and so `mid = 2` is a peak!
+We want to find a peak in the array `const arr = [1,2,9,5,3,7,8,6]` using the function above. First iteration, we have `lower = 0` and `upper = 7` since the length of the array is `8` so the last index (position) will be `7`. Now, `mid = 3` and with comparing both neighbors of `arr[3]` we get that the first condition is satisfied and we should look at the left side an ignore the right one. Second iteration, we have `lower = 0` and `upper = 2` and so `mid = 1` and this time the second condition is being satisfied and so we look into the right side. Third iteration, `lower = 2` and `upper = 2` and therefore `mid = 2` and neither of the first condition nor the the second one are satisfied and so `mid = 2` is a peak!
 
 **What is the complexity?**
 
@@ -95,10 +95,10 @@ Keep doing this until we get
 
 since the best case we have `T(n) = O(1)` (when the array has only one element!)
 
-Now, if we follow the patter from the above expanding
+Now, if we follow the pattern from the above expanding
 
 `T(n) => T(n/2) => T(n/4) => T(n/8) ...`
 
-we can see that the last term will be `n/2^x = 1` where x is the number of repeating the process, and this give us `x = log2(n)` so we have to sum `O(1)` log2(n) times in the above expanding.
+we can see that the last term will be `n/2^x = 1` where x is the number of repeating the process, and this gives us `x = log2(n)` so we have to sum `O(1)` log2(n) times in the above expanding.
 
-Therefore, `T(n) = O(log2(n))`
+Therefore, `T(n) = O(log2(n))`.
