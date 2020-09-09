@@ -102,3 +102,58 @@ Now, if we follow the pattern from the above expanding
 we can see that the last term will be `n/2^x = 1` where x is the number of repeating the process, and this gives us `x = log2(n)` so we have to sum `O(1)` log2(n) times in the above expanding.
 
 Therefore, `T(n) = O(log2(n))`.
+
+## One-dimensional Version
+
+Lets consider a 2D array:
+
+![2d-array](2d-array.png)
+
+we say that `a `is a 2D-peak if and only if `a >= b`, `a >= c`, `a >= d` and `a >= e`.
+
+Lets see different attempts to find any 2D peak in a 2D array with `n` rows and `m` columns:
+
+### Attempt 1
+
+- **Approach:**
+  - For each row `i`, find its global maximum `B[j]`
+  - Apply 1D peak finder to find a peak (say `B[i]`) of `B[1,...,i-1,i,i+1,...,n]`
+- **Correctness:**
+
+  Suppose `B[i]` is the global maximum of the row `i`, `B[i+1]` is the global maximum of the row `i+1` and `B[i-1]` is the global maximum of the row `i-1`. If `B[j]` is a peak of `B[1,...,i-1,i,i+1,...,n]` then `B[i] >= B[i+1]` and `B[i] >= B[i-1]` and so `B[i]` is larger than all elements of row `i+1` and row `i-1`, therefor `B[i]` is larger than all of its neighbors. Hence, `B[i]` is a 2D peak.
+
+- **Time Complexity:**
+
+  `T(n) = O(n.m)`, since we have to look for a global maximum which is `O(m)` in each row `n` times (`n` is the number of rows).
+
+- **Enhancement:**  
+  For each element we can find a 1D peak instead of finding a global maximum, this will yield a time complexity of `O(n.log2(m))`.
+
+```js
+const peakFinder1D = (arr, lower = 0, upper = arr.length - 1) => {
+  const mid = Math.floor(lower + (upper - lower) / 2);
+  if (arr[mid - 1] > arr[mid]) {
+    return peakFinder1D(arr, lower, mid - 1);
+  } else if (arr[mid + 1] > arr[mid]) {
+    return peakFinder1D(arr, mid + 1, upper);
+  } else {
+    return arr[mid];
+  }
+};
+
+const peakFinder2D = (arr) => {
+  const peaks = [];
+  for (let i = 0; i < arr.length; i++) {
+    const rowPeak = peakFinder1D(arr[i]);
+    peaks.push(rowPeak);
+  }
+  return peakFinder1D(peaks);
+};
+
+peakFinder2D([
+  [12, 8, 5],
+  [11, 3, 6],
+  [10, 9, 2],
+  [8, 4, 1],
+]); // Result: 12
+```
