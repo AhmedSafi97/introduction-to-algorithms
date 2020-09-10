@@ -116,38 +116,36 @@ Lets see different attempts to find any 2D peak in a 2D array with `n` rows and 
 ### Attempt 1
 
 - **Approach:**
-  - For each row `i`, find its global maximum `B[j]`
-  - Apply 1D peak finder to find a peak (say `B[i]`) of `B[1,...,i-1,i,i+1,...,n]`
+  - For each column `j`, find its global maximum `B[j]`
+  - Apply 1D peak finder to find a peak (say `B[j]`) of `B[1,...,j-1,j,j+1,...,m]`
 - **Correctness:**
 
-  Suppose `B[i]` is the global maximum of the row `i`, `B[i+1]` is the global maximum of the row `i+1` and `B[i-1]` is the global maximum of the row `i-1`. If `B[j]` is a peak of `B[1,...,i-1,i,i+1,...,n]` then `B[i] >= B[i+1]` and `B[i] >= B[i-1]` and so `B[i]` is larger than all elements of row `i+1` and row `i-1`, therefor `B[i]` is larger than all of its neighbors. Hence, `B[i]` is a 2D peak.
+  Suppose `B[i=j]` is the global maximum of the column `j`, `B[j+1]` is the global maximum of the column `j+1` and `B[j-1]` is the global maximum of the column `j-1`. If `B[j]` is a peak of `B[1,...,j-1,j,j+1,...,m]` then `B[j] >= B[j+1]` and `B[j] >= B[j-1]` and so `B[j]` is larger than all elements of column `j+1` and column `j-1`, therefor `B[j]` is larger than all of its neighbors. Hence, `B[j]` is a 2D peak.
 
 - **Time Complexity:**
 
-  `T(n) = O(n.m)`, since we have to look for a global maximum which is `O(m)` in each row `n` times (`n` is the number of rows).
+  `T(n) = O(n.m)`, since we have to look for a global maximum which is `O(n)` in each column `m` times (`m` is the number of columns).
 
 - **Enhancement:**  
-  For each element we can find a 1D peak instead of finding a global maximum, this will yield a time complexity of `O(n.log2(m))`.
+  For each column we can find a 1D peak instead of finding a global maximum, this will yield a time complexity of `O(m.log2(n))`.
 
 ```js
-const peakFinder1D = (arr, lower = 0, upper = arr.length - 1) => {
-  const mid = Math.floor(lower + (upper - lower) / 2);
-  if (arr[mid - 1] > arr[mid]) {
-    return peakFinder1D(arr, lower, mid - 1);
-  } else if (arr[mid + 1] > arr[mid]) {
-    return peakFinder1D(arr, mid + 1, upper);
-  } else {
-    return arr[mid];
+const findGlobalMax = (arr, col) => {
+  let max = arr[0][col];
+  for (let i = 1; i < arr.length; i++) {
+    if (max < arr[i][col]) max = arr[i][col];
   }
+  return max;
 };
 
 const peakFinder2D = (arr) => {
   const peaks = [];
-  for (let i = 0; i < arr.length; i++) {
-    const rowPeak = peakFinder1D(arr[i]);
-    peaks.push(rowPeak);
+  const colNum = arr[0].length;
+  for (let j = 0; i < colNum; j++) {
+    const max = findGlobalMax(arr, j);
+    peaks.push(max);
   }
-  return peakFinder1D(peaks);
+  return Math.max(...peaks);
 };
 
 peakFinder2D([
@@ -156,4 +154,77 @@ peakFinder2D([
   [10, 9, 2],
   [8, 4, 1],
 ]); // Result: 12
+```
+
+### Attempt 2
+
+- **approach:**
+
+  - Pick middle column j = m/2.
+  - Find global maximum on column j at (i, j).
+  - Compare (i, j-1),(i, j),(i, j+1).
+  - Pick left columns if (i, j-1) > (i, j).
+  - Pick right columns if (i, j+1) > (i, j).
+  - (i, j) is a 2D-peak if neither condition holds.
+  - Solve the new problem with half the number of columns.
+  - When we have a single column we find global maximum and we‘re done.
+
+- **Correctness:**
+  If we pick a global maximum say `a` across the middle column comparing it to its neighbors say `b` and `c` on the left and right columns, if `a >= b` and `a >= c` we are done. But, if `b > a` we claim that there is a peak on the left columns and if `c > a` we claim the same for the right columns. Now, lets prove one of our claims:
+
+  **claim:** If `b > a` then there is a peak among the left columns.
+
+  **proof:** Suppose that `b > a` but there is no peak among the left rows, then `b` must have a neighbor `b1` with a higher value and `b1` must have a neighbor `b2` with a higher value. We have to stay on the left side because we cannot enter the middle column. But at some point, we would run out the elements of the left rows. Hence, we have to find a peak at some point.
+
+- **Time Complexity:**
+
+  `T(n,m)= T(n,m/2) + O(n)`, where `O(n)` is the time needed to scan the middle column for a global maximum.
+
+  Expanding the above equation we get,
+
+  `T(n,m) = T(n,m/4) + O(n) + O(n)`
+
+  `T(n,m) = T(n,m/8) + O(n) + O(n) + O(n)`
+
+  Keep doing this until we get
+
+  `T(n,m) = O(n) + ... + O(n)`
+
+  since the best case we have `T(n,1) = O(n)` (when the array has only one column)
+
+  Now, if we follow the pattern from the above expanding
+
+  `T(n,m) => T(n,m/2) => T(n,m/4) => T(n,m/8) ...`
+
+  we can see that the last term will be `m/2^x = 1` where x is the number of repeating the process(Recursion), and this gives us `x = log2(m)` so we have to sum `O(n)` log2(m) times in the above expanding.
+
+  Therefore, `T(n,m) = O(nlog2(m))`.
+
+```js
+const findGlobalMax = (arr, col) => {
+  let max = 0;
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[max][col] < arr[i][col]) max = i;
+  }
+  return max;
+};
+
+const peakFinder2D = (arr, lower = 0, upper = arr[0].length - 1) => {
+  const mid = Math.floor(lower + (upper - lower) / 2);
+  const max = findGlobalMax(arr, mid);
+  if (arr[max][mid - 1] > arr[max][mid]) {
+    return peakFinder2D(arr, lower, mid - 1);
+  } else if (arr[max][mid + 1] > arr[max][mid]) {
+    return peakFinder2D(arr, mid + 1, upper);
+  } else {
+    return arr[max][mid];
+  }
+};
+
+peakFinder2D([
+  [12, 8, 5],
+  [11, 3, 6],
+  [10, 9, 2],
+  [8, 4, 1],
+]);
 ```
