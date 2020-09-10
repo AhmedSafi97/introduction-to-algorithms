@@ -103,7 +103,7 @@ we can see that the last term will be `n/2^x = 1` where x is the number of repea
 
 Therefore, `T(n) = O(log2(n))`.
 
-## One-dimensional Version
+## Two-dimensional Version
 
 Lets consider a 2D array:
 
