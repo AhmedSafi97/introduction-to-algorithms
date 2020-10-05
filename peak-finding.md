@@ -6,7 +6,7 @@
 
 Let's say that we have an array of elements as follow,
 
-![array of elements](array-of-elements.png)
+![array-of-elements](https://user-images.githubusercontent.com/50768052/95097116-c7b32680-0735-11eb-9fa9-aa45e2ff4436.png)
 
 we say that the position `2` is a peak if and only if `a <= b` and `c <= b`.
 
@@ -38,7 +38,7 @@ Yes, Divide and Conquer!.
 
 Look at the middle, if it is a peak we are done. If not, decide a direction based on which neighboring element is larger than the middle element.
 
-![divide and conquer](divide-and-conquer.png)
+![divide-and-conquer](https://user-images.githubusercontent.com/50768052/95097205-e31e3180-0735-11eb-8e8b-09413cc910ca.png)
 
 We have three cases:
 
@@ -56,7 +56,7 @@ But how can we be sure in which side it lies ?
 
 Depending on which neighboring element is larger we can argue that one side definitely has a local or global maximum as it's illustrated by the graph below.
 
-![global maximum](global-maximum.png)
+![global-maximum](https://user-images.githubusercontent.com/50768052/95097258-f204e400-0735-11eb-84ba-21e11e004c2e.png)
 
 Let's write a code an see how this algorithm works:
 
@@ -107,7 +107,7 @@ Therefore, `T(n) = O(log2(n))`.
 
 Lets consider a 2D array:
 
-![2d-array](2d-array.png)
+![2d-array](https://user-images.githubusercontent.com/50768052/95097297-fd580f80-0735-11eb-9721-ab6ae268d851.png)
 
 we say that `a `is a 2D-peak if and only if `a >= b`, `a >= c`, `a >= d` and `a >= e`.
 
